@@ -1,11 +1,151 @@
+# # ---------------------- NLTK Safe Download ----------------------
+# # ---------------------- NLTK Safe Download ----------------------
+# # ---------------------- NLTK Downloads ----------------------
+# import nltk
+# import os
+# import ssl
+
+# # Fix SSL issues on Streamlit Cloud
+# try:
+#     _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+#     pass
+# else:
+#     ssl._create_default_https_context = _create_unverified_https_context
+
+# # Download required NLTK data
+# nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
+# if not os.path.exists(os.path.join(nltk_data_path, "tokenizers", "punkt")):
+#     nltk.download("punkt", download_dir=nltk_data_path)
+# if not os.path.exists(os.path.join(nltk_data_path, "corpora", "wordnet")):
+#     nltk.download("wordnet", download_dir=nltk_data_path)
+# if not os.path.exists(os.path.join(nltk_data_path, "corpora", "omw-1.4")):
+#     nltk.download("omw-1.4", download_dir=nltk_data_path)
+# nltk.data.path.append(nltk_data_path)
+
+
+# # ---------------------- Imports ----------------------
+# import streamlit as st
+# import text2emotion as te
+# from langchain_ollama import ChatOllama
+# from langchain_core.prompts import (
+#     SystemMessagePromptTemplate, HumanMessagePromptTemplate,
+#     AIMessagePromptTemplate, ChatPromptTemplate
+# )
+
+# # ---------------------- Emotion Emoji ----------------------
+# emotion_emojis = {
+#     "Happy": "😄", "Sad": "😢", "Angry": "😠", "Fear": "😨",
+#     "Surprise": "😲", "Neutral": "🤖", "Cry": "😭"
+# }
+
+# # ---------------------- CSS Styling ----------------------
+# st.markdown("""
+#     <style>
+#         body { font-family: 'Segoe UI', sans-serif; }
+#         .title { text-align: center; color: #4A90E2; font-size: 2.5em; margin-bottom: 0; }
+#         .subtitle { text-align: center; color: #888; font-size: 1.1em; margin-top: 0; }
+#         .chat-container {
+#             max-height: 400px;
+#             overflow-y: auto;
+#             padding: 10px;
+#             background-color: #f7f7f7;
+#             border-radius: 10px;
+#             margin-top: 10px;
+#         }
+#         .user-msg {
+#             background-color: #DCF8C6;
+#             padding: 10px;
+#             border-radius: 8px;
+#             margin-bottom: 8px;
+#             color: #000000;
+#         }
+#         .assistant-msg {
+#             background-color: #E8EAF6;
+#             padding: 10px;
+#             border-radius: 8px;
+#             margin-bottom: 8px;
+#             color: #333333
+#         }
+#     </style>
+# """, unsafe_allow_html=True)
+
+# # ---------------------- Title ----------------------
+# st.markdown("<div class='title'>🤖 Smart-Virtal-AI-Assistant-with-Emotions </div>", unsafe_allow_html=True)
+# st.markdown("<div class='subtitle'>Your Smart-Virtal-AI-Assistant-with-Emotions chatbot that understands your mood</div>", unsafe_allow_html=True)
+
+# # ---------------------- Ollama Model Setup ----------------------
+# model = ChatOllama(model="llama3", base_url="http://localhost:11434/")
+
+# # ---------------------- Streamlit Session ----------------------
+# if "chat_history" not in st.session_state:
+#     st.session_state['chat_history'] = []
+
+# # ---------------------- Helper Functions ----------------------
+# def generate_response(full_prompt):
+#     messages = ChatPromptTemplate.from_messages(full_prompt).format_messages()
+#     response = model.invoke(messages)
+#     return response.content
+
+# def get_history():
+#     history = []
+#     for chat in st.session_state['chat_history']:
+#         history.append(HumanMessagePromptTemplate.from_template(chat['user']))
+#         history.append(AIMessagePromptTemplate.from_template(chat['assistant']))
+#     return history
+
+# # ---------------------- User Input Form ----------------------
+# with st.form("llm-form"):
+#     text = st.text_area("💬 Enter your question below", height=100)
+#     col1, col2 = st.columns([1, 5])
+#     with col2:
+#         submit = st.form_submit_button("🎤 Ask")
+
+# # ---------------------- Handle Input ----------------------
+# if submit and text.strip():
+#     with st.spinner("Analyzing emotions and generating response..."):
+#         emotions = te.get_emotion(text)
+#         dominant_emotion = max(emotions, key=emotions.get) if emotions else "Neutral"
+#         emoji = emotion_emojis.get(dominant_emotion, "🤖")
+
+#         st.success(f"Detected Emotion: {dominant_emotion} {emoji}")
+
+#         system_prompt = SystemMessagePromptTemplate.from_template(
+#             f"You are an emotionally intelligent AI Assistant for Working Professionals and students. "
+#             f"The user is currently feeling **{dominant_emotion}**. "
+#             f"Respond briefly and kindly, with empathy. Explain things like a Politely speaking Smart Assistant."
+#         )
+
+#         full_prompt = [system_prompt] + get_history()
+#         full_prompt.append(HumanMessagePromptTemplate.from_template(text))
+
+#         response = generate_response(full_prompt)
+
+#         st.session_state['chat_history'].append({
+#             'user': text,
+#             'assistant': f"{emoji} {response}"
+#         })
+
+# # ---------------------- Chat History ----------------------
+# st.markdown("## 🗂️ Chat History")
+# st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+
+# for chat in reversed(st.session_state['chat_history']):
+#     st.markdown(f"<div class='user-msg'><strong>👤 You:</strong> {chat['user']}</div>", unsafe_allow_html=True)
+#     st.markdown(f"<div class='assistant-msg'><strong>{chat['assistant'].split()[0]} Assistant:</strong> {' '.join(chat['assistant'].split()[1:])}</div>", unsafe_allow_html=True)
+
+# st.markdown("</div>", unsafe_allow_html=True)
+
+# # ---------------------- Clear Option ----------------------
+# if st.button("🗑️ Clear Chat"):
+#     st.session_state['chat_history'] = []
+
+
 # ---------------------- NLTK Safe Download ----------------------
-# ---------------------- NLTK Safe Download ----------------------
-# ---------------------- NLTK Downloads ----------------------
 import nltk
 import os
 import ssl
 
-# Fix SSL issues on Streamlit Cloud
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -13,7 +153,6 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-# Download required NLTK data
 nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
 if not os.path.exists(os.path.join(nltk_data_path, "tokenizers", "punkt")):
     nltk.download("punkt", download_dir=nltk_data_path)
@@ -23,15 +162,18 @@ if not os.path.exists(os.path.join(nltk_data_path, "corpora", "omw-1.4")):
     nltk.download("omw-1.4", download_dir=nltk_data_path)
 nltk.data.path.append(nltk_data_path)
 
-
 # ---------------------- Imports ----------------------
 import streamlit as st
 import text2emotion as te
-from langchain_ollama import ChatOllama
 from langchain_core.prompts import (
     SystemMessagePromptTemplate, HumanMessagePromptTemplate,
     AIMessagePromptTemplate, ChatPromptTemplate
 )
+from langchain.chat_models import ChatTogetherAI
+
+# ---------------------- Together API Setup ----------------------
+os.environ["TOGETHER_API_KEY"] = "4bfac35917a070e3d6aa4ad41310515299385e0f9e043600410317bd64030764" 
+model = ChatTogetherAI(model="meta-llama/Llama-3-8b-chat-hf")
 
 # ---------------------- Emotion Emoji ----------------------
 emotion_emojis = {
@@ -65,19 +207,16 @@ st.markdown("""
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 8px;
-            color: #333333
+            color: #333333;
         }
     </style>
 """, unsafe_allow_html=True)
 
 # ---------------------- Title ----------------------
-st.markdown("<div class='title'>🤖 Smart-Virtal-AI-Assistant-with-Emotions </div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Your Smart-Virtal-AI-Assistant-with-Emotions chatbot that understands your mood</div>", unsafe_allow_html=True)
+st.markdown("<div class='title'>🤖 Smart Virtual AI Assistant with Emotions</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Your emotional intelligence-powered AI companion</div>", unsafe_allow_html=True)
 
-# ---------------------- Ollama Model Setup ----------------------
-model = ChatOllama(model="llama3", base_url="http://localhost:11434/")
-
-# ---------------------- Streamlit Session ----------------------
+# ---------------------- Session Init ----------------------
 if "chat_history" not in st.session_state:
     st.session_state['chat_history'] = []
 
