@@ -1,53 +1,28 @@
-# ---------------------- NLTK Safe Download ----------------------
-# ---------------------- NLTK Safe Download ----------------------
+# ---------------------- Install Instructions ----------------------
+# pip install -r requirements.txt
+
+# ---------------------- NLTK Downloads ----------------------
 import nltk
-import os
-import ssl
-
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
-
-# Force download punkt tokenizer & wordnet
-nltk.download("punkt")
-nltk.download("wordnet")
-nltk.download("omw-1.4")
-
+nltk.download('punkt')
+nltk.download('omw-1.4', quiet=True)
+nltk.download('wordnet', quiet=True)
 
 # ---------------------- Imports ----------------------
 import streamlit as st
 import text2emotion as te
-import together
+from langchain_ollama import ChatOllama
 from langchain_core.prompts import (
     SystemMessagePromptTemplate, HumanMessagePromptTemplate,
-    AIMessagePromptTemplate
+    AIMessagePromptTemplate, ChatPromptTemplate
 )
-
-# ---------------------- Together AI Setup ----------------------
-together.api_key = "your_together_api_key_here"  # 🔒 Replace with your actual key
-
-def generate_response(prompt_text: str) -> str:
-    response = together.Complete.create(
-        prompt=prompt_text,
-        model="meta-llama/Llama-3-8b-chat-hf",
-        max_tokens=256,
-        temperature=0.7,
-        top_p=0.7,
-        stop=["</s>"]
-    )
-    return response['output']['choices'][0]['text'].strip()
 
 # ---------------------- Emotion Emoji ----------------------
 emotion_emojis = {
     "Happy": "😄", "Sad": "😢", "Angry": "😠", "Fear": "😨",
-    "Surprise": "😲", "Neutral": "🤖", "Cry": "😭"
+    "Surprise": "😲", "Neutral": "🤖"
 }
 
-# ---------------------- Streamlit UI ----------------------
-st.set_page_config(page_title="EmoChat AI", page_icon="🤖")
+# ---------------------- CSS Styling ----------------------
 st.markdown("""
     <style>
         body { font-family: 'Segoe UI', sans-serif; }
@@ -73,19 +48,29 @@ st.markdown("""
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 8px;
-            color: #333333;
+            color: #333333; /* Fixed: readable text */
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🤖 Smart Virtual AI Assistant with Emotions</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Your emotional intelligence-powered AI companion</div>", unsafe_allow_html=True)
 
-# ---------------------- Session State ----------------------
+# ---------------------- Title ----------------------
+st.markdown("<div class='title'>🤖 Smart-Virtual-AI-Assistant-with-Emotions</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Your friendly Smart-Virtual-AI-Assistant-with-Emotions that understands your mood</div>", unsafe_allow_html=True)
+
+# ---------------------- Ollama Model Setup ----------------------
+model = ChatOllama(model="llama3", base_url="http://localhost:11434/")
+
+# ---------------------- Streamlit Session ----------------------
 if "chat_history" not in st.session_state:
     st.session_state['chat_history'] = []
 
-# ---------------------- Chat History Helpers ----------------------
+# ---------------------- Helper Functions ----------------------
+def generate_response(full_prompt):
+    messages = ChatPromptTemplate.from_messages(full_prompt).format_messages()
+    response = model.invoke(messages)
+    return response.content
+
 def get_history():
     history = []
     for chat in st.session_state['chat_history']:
@@ -93,12 +78,14 @@ def get_history():
         history.append(AIMessagePromptTemplate.from_template(chat['assistant']))
     return history
 
-# ---------------------- Input Form ----------------------
+# ---------------------- User Input Form ----------------------
 with st.form("llm-form"):
     text = st.text_area("💬 Enter your question below", height=100)
-    submit = st.form_submit_button("🎤 Ask")
+    col1, col2 = st.columns([1, 5])
+    with col2:
+        submit = st.form_submit_button("🎤 Ask")
 
-# ---------------------- Chat Response ----------------------
+# ---------------------- Handle Input ----------------------
 if submit and text.strip():
     with st.spinner("Analyzing emotions and generating response..."):
         emotions = te.get_emotion(text)
@@ -107,24 +94,24 @@ if submit and text.strip():
 
         st.success(f"Detected Emotion: {dominant_emotion} {emoji}")
 
+        # Create new prompt with emotion context
         system_prompt = SystemMessagePromptTemplate.from_template(
-            f"You are an emotionally intelligent AI Assistant for Working Professionals and students. "
+            f"You are an emotionally intelligent Smart-Virtual-AI-Assistant-with-Emotions for users, you talk users in politely manner like a good mentor and feel their emotions. "
             f"The user is currently feeling **{dominant_emotion}**. "
-            f"Respond briefly and kindly, with empathy. Explain things like a polite smart assistant."
+            f"Respond briefly and kindly, with empathy. Explain things like a Smart-Virtual-AI-Assistant-with-Emotions."
         )
 
         full_prompt = [system_prompt] + get_history()
         full_prompt.append(HumanMessagePromptTemplate.from_template(text))
 
-        combined_prompt = "\n".join([p.template for p in full_prompt])
-        response = generate_response(combined_prompt)
+        response = generate_response(full_prompt)
 
         st.session_state['chat_history'].append({
             'user': text,
             'assistant': f"{emoji} {response}"
         })
 
-# ---------------------- Chat History UI ----------------------
+# ---------------------- Chat History ----------------------
 st.markdown("## 🗂️ Chat History")
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 

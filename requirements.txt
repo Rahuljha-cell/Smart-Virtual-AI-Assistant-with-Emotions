@@ -1,13 +1,10 @@
-# Core app dependencies
-streamlit==1.35.0
+emoji==1.6.3
 text2emotion==0.0.5
-nltk==3.8.1
-pillow==10.2.0
-
-
-
-# Backend dependencies
-requests==2.31.0
-
-# Optional: emojis handling (some versions of text2emotion rely on emoji package)
-emoji==2.10.1
+nltk
+streamlit
+langchain
+langchain-core
+langchain-community
+langchain-ollama
+typing-extensions
+pydantic
