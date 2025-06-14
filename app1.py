@@ -1,17 +1,18 @@
 # ---------------------- NLTK Safe Download ----------------------
+# ---------------------- NLTK Safe Download ----------------------
 import nltk
+import os
 
-nltk_resources = {
-    "punkt": "tokenizers/punkt",
-    "wordnet": "corpora/wordnet",
-    "omw-1.4": "corpora/omw-1.4"
-}
-
-for resource, path in nltk_resources.items():
+# Fix for Streamlit Cloud: manually download resources if not found
+def ensure_nltk_resource(resource_name, resource_path):
     try:
-        nltk.data.find(path)
+        nltk.data.find(resource_path)
     except LookupError:
-        nltk.download(resource)
+        nltk.download(resource_name)
+
+ensure_nltk_resource("punkt", "tokenizers/punkt")
+ensure_nltk_resource("wordnet", "corpora/wordnet")
+ensure_nltk_resource("omw-1.4", "corpora/omw-1.4")
 
 # ---------------------- Imports ----------------------
 import streamlit as st
