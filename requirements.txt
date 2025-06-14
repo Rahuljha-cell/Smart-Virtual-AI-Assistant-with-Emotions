@@ -1,7 +1,7 @@
 streamlit
 nltk
 text2emotion
-emoji
+emoji==1.6.3
 langchain
 langchain-core
 langchain-community
