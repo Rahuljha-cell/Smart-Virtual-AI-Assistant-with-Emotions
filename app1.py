@@ -1,4 +1,5 @@
 # ---------------------- NLTK Safe Download ----------------------
+# ---------------------- NLTK Safe Download ----------------------
 import nltk
 import os
 import ssl
@@ -10,11 +11,11 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
-nltk.download("punkt", download_dir=nltk_data_path)
-nltk.download("wordnet", download_dir=nltk_data_path)
-nltk.download("omw-1.4", download_dir=nltk_data_path)
-nltk.data.path.append(nltk_data_path)
+# Force download punkt tokenizer & wordnet
+nltk.download("punkt")
+nltk.download("wordnet")
+nltk.download("omw-1.4")
+
 
 # ---------------------- Imports ----------------------
 import streamlit as st
