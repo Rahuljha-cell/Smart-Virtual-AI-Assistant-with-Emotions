@@ -1,24 +1,17 @@
-# ---------------------- Install Instructions ----------------------
-# pip install -r requirements.txt
-
-# ---------------------- NLTK Downloads ----------------------
+# ---------------------- NLTK Safe Download ----------------------
 import nltk
 
-# Safe downloads for NLTK data
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
+nltk_resources = {
+    "punkt": "tokenizers/punkt",
+    "wordnet": "corpora/wordnet",
+    "omw-1.4": "corpora/omw-1.4"
+}
 
-try:
-    nltk.data.find("corpora/wordnet")
-except LookupError:
-    nltk.download("wordnet")
-
-try:
-    nltk.data.find("corpora/omw-1.4")
-except LookupError:
-    nltk.download("omw-1.4")
+for resource, path in nltk_resources.items():
+    try:
+        nltk.data.find(path)
+    except LookupError:
+        nltk.download(resource)
 
 # ---------------------- Imports ----------------------
 import streamlit as st
@@ -32,7 +25,7 @@ from langchain_core.prompts import (
 # ---------------------- Emotion Emoji ----------------------
 emotion_emojis = {
     "Happy": "😄", "Sad": "😢", "Angry": "😠", "Fear": "😨",
-    "Surprise": "😲", "Neutral": "🤖"
+    "Surprise": "😲", "Neutral": "🤖", "Cry": "😭"
 }
 
 # ---------------------- CSS Styling ----------------------
@@ -106,11 +99,10 @@ if submit and text.strip():
 
         st.success(f"Detected Emotion: {dominant_emotion} {emoji}")
 
-        # Create new prompt with emotion context
         system_prompt = SystemMessagePromptTemplate.from_template(
-            f"You are an emotionally intelligent AI teacher for 5th-grade students. "
+            f"You are an emotionally intelligent AI Assistant for Working Professionals and students. "
             f"The user is currently feeling **{dominant_emotion}**. "
-            f"Respond briefly and kindly, with empathy. Explain things like a friendly school teacher."
+            f"Respond briefly and kindly, with empathy. Explain things like a Politely speaking Smart Assistant."
         )
 
         full_prompt = [system_prompt] + get_history()
