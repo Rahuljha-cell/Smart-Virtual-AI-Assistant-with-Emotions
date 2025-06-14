@@ -1,6 +1,7 @@
 streamlit
-nltk
-text2emotion
+nltk=3.8.1
+streamlit-ace
+text2emotion==0.0.5
 emoji==1.6.3
 langchain
 langchain-core

@@ -1,18 +1,28 @@
 # ---------------------- NLTK Safe Download ----------------------
 # ---------------------- NLTK Safe Download ----------------------
+# ---------------------- NLTK Downloads ----------------------
 import nltk
 import os
+import ssl
 
-# Fix for Streamlit Cloud: manually download resources if not found
-def ensure_nltk_resource(resource_name, resource_path):
-    try:
-        nltk.data.find(resource_path)
-    except LookupError:
-        nltk.download(resource_name)
+# Fix SSL issues on Streamlit Cloud
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
 
-ensure_nltk_resource("punkt", "tokenizers/punkt")
-ensure_nltk_resource("wordnet", "corpora/wordnet")
-ensure_nltk_resource("omw-1.4", "corpora/omw-1.4")
+# Download required NLTK data
+nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
+if not os.path.exists(os.path.join(nltk_data_path, "tokenizers", "punkt")):
+    nltk.download("punkt", download_dir=nltk_data_path)
+if not os.path.exists(os.path.join(nltk_data_path, "corpora", "wordnet")):
+    nltk.download("wordnet", download_dir=nltk_data_path)
+if not os.path.exists(os.path.join(nltk_data_path, "corpora", "omw-1.4")):
+    nltk.download("omw-1.4", download_dir=nltk_data_path)
+nltk.data.path.append(nltk_data_path)
+
 
 # ---------------------- Imports ----------------------
 import streamlit as st
@@ -61,8 +71,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------- Title ----------------------
-st.markdown("<div class='title'>🤖 Emotion-Aware Chat Assistant</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Your friendly 5th-grade teacher chatbot that understands your mood</div>", unsafe_allow_html=True)
+st.markdown("<div class='title'>🤖 Smart-Virtal-AI-Assistant-with-Emotions </div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Your Smart-Virtal-AI-Assistant-with-Emotions chatbot that understands your mood</div>", unsafe_allow_html=True)
 
 # ---------------------- Ollama Model Setup ----------------------
 model = ChatOllama(model="llama3", base_url="http://localhost:11434/")
