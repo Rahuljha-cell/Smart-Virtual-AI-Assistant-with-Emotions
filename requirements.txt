@@ -3,3 +3,4 @@ text2emotion
 nltk
 together
 langchain-core
+emoji==1.6.3
