@@ -3,9 +3,12 @@
 
 # ---------------------- NLTK Downloads ----------------------
 import nltk
-nltk.download('punkt')
-nltk.download('omw-1.4', quiet=True)
-nltk.download('wordnet', quiet=True)
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+    nltk.download('wordnet', quiet=True)
+    nltk.download('omw-1.4', quiet=True)
 
 # ---------------------- Imports ----------------------
 import streamlit as st
