@@ -221,10 +221,21 @@ if "chat_history" not in st.session_state:
     st.session_state['chat_history'] = []
 
 # ---------------------- Helper Functions ----------------------
-def generate_response(full_prompt):
-    messages = ChatPromptTemplate.from_messages(full_prompt).format_messages()
-    response = model.invoke(messages)
-    return response.content
+import together
+
+together.api_key = "4bfac35917a070e3d6aa4ad41310515299385e0f9e043600410317bd64030764"
+
+def generate_response(prompt_text: str) -> str:
+    response = together.Complete.create(
+        prompt=prompt_text,
+        model="meta-llama/Llama-3-8b-chat-hf",
+        max_tokens=256,
+        temperature=0.7,
+        top_p=0.7,
+        stop=["</s>"]
+    )
+    return response['output']['choices'][0]['text'].strip()
+
 
 def get_history():
     history = []
