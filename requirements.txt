@@ -1,8 +1,5 @@
 streamlit
-nltk
 text2emotion
-langchain
-langchain-core
-langchain-community
+nltk
 together
-together-ai
+langchain-core
