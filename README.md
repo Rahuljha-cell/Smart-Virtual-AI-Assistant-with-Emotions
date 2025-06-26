@@ -145,6 +145,16 @@ ARIA represents the future of customer interaction - where technology doesn't ju
 
 *Built with ❤️ for emotionally intelligent customer experiences*
 
+<img src="assets/1.png" width="500"/>
+<img src="assets/2.png" width="500"/>
+<img src="assets/3.png" width="500"/>
+<img src="assets/4.png" width="500"/>
+<img src="assets/5.png" width="500"/>
+<img src="assets/6.png" width="500"/>
+<img src="assets/7.png" width="500"/>
+<img src="assets/8.png" width="500"/>
+
+
 
 
 
