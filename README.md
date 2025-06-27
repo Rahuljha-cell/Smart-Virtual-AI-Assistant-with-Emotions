@@ -1,4 +1,5 @@
-## For Case Competition: Please visit this website to get more  insights of this project https://case-competition-git-main-rahuljha-cells-projects.vercel.app/
+### For Case Competition: Please visit this website to get more  insights of this project: https://case-competition-git-main-rahuljha-cells-projects.vercel.app/ 
+### This is github link: https://github.com/Rahuljha-cell/Smart-Virtual-AI-Assistant-with-Emotions
 
 
 
